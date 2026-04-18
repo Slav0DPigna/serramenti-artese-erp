@@ -1,0 +1,38 @@
+<div class="glass-panel">
+  <h2>Giacenze Magazzino (Scorte)</h2>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Materia</th>
+          <th>Quantità Disponibile</th>
+          <th>Soglia Minima</th>
+          <th>Stato</th>
+          <th>Azioni</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of materie" [class.danger]="m.quantitaDisponibile <= m.sogliaMinima">
+          <td>{{m.nome}}</td>
+          <td>{{m.quantitaDisponibile}}</td>
+          <td>{{m.sogliaMinima}}</td>
+          <td>
+            <span *ngIf="m.quantitaDisponibile > m.sogliaMinima" style="color: var(--success)">✓ OK</span>
+            <span *ngIf="m.quantitaDisponibile <= m.sogliaMinima" style="color: var(--danger)">⚠ Esaurimento (Trigger attivato)</span>
+          </td>
+          <td>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="number" min="1" step="1" [(ngModel)]="m.quantitaInput" style="width: 70px; padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit; font-size: 1rem;">
+              <button class="btn" (click)="usaMateria(m)" style="background: var(--danger)">
+                - Rimuovi
+              </button>
+              <button *ngIf="isDirettore || isMagazziniere" class="btn" (click)="aggiungiMateria(m)" style="background: var(--success)">
+                + Aggiungi
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

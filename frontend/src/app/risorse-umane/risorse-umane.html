@@ -1,0 +1,94 @@
+<div class="glass-panel" *ngIf="isDirettore" style="margin-bottom: 20px;">
+  <h2>Risorse Umane - Direzione Centralizzata</h2>
+  <div class="table-container">
+    <table>
+      <thead><tr><th>CF</th><th>Nome</th><th>Ruolo</th><th>Stipendio Mensile</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let d of dipendenti">
+          <td><small style="color: var(--text-secondary)">{{d.cf}}</small></td>
+          <td style="font-weight: bold;">{{d.nome}}</td>
+          <td>{{d.ruolo}}</td>
+          <td>{{d.stipendio | currency:'EUR':'symbol'}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="glass-panel">
+  <h2>Gestione Assenze e Ferie</h2>
+  
+  <div *ngIf="!isDirettore" class="order-form" style="margin-bottom: 20px;">
+     <h3 style="color: var(--primary);">Inoltra Nuova Richiesta al Direttore</h3>
+     <div class="form-grid">
+       <div class="form-group" *ngIf="mioProfilo">
+         <label>Profilo Identificato dal Sistema</label>
+         <input type="text" disabled [value]="mioProfilo.nome + ' (' + mioProfilo.ruolo + ')'" style="background: rgba(255,255,255,0.1); cursor: not-allowed;">
+       </div>
+       <div class="form-group" *ngIf="!mioProfilo">
+         <label style="color: var(--warning)">Profilo non trovato per questo account Keycloak</label>
+       </div>
+       <div class="form-group">
+         <label>Data Inizio Permesso *</label>
+         <input type="date" [(ngModel)]="nuovaRichiesta.dataInizio">
+       </div>
+       <div class="form-group">
+         <label>Data Fine (Opzionale)</label>
+         <input type="date" [(ngModel)]="nuovaRichiesta.dataFine">
+       </div>
+       <div class="form-group">
+         <label>Motivazione *</label>
+         <input type="text" [(ngModel)]="nuovaRichiesta.motivazione" placeholder="Es. Visita Medica, Ferie Estive, Permesso Retribuito...">
+       </div>
+     </div>
+     <div style="text-align: right; margin-top: 15px;">
+        <button class="btn" style="background: var(--primary)" (click)="richiediPermesso()">📤 Invia Richiesta all'Amministrazione</button>
+     </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Dipendente Richiedente</th>
+          <th>Periodo Assenza</th>
+          <th>Motivazione Fornita</th>
+          <th>Stato Pratica</th>
+          <th *ngIf="isDirettore">Validazione HR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of permessi">
+          <td><strong>{{p.richiedente?.nome || '-'}}</strong></td>
+          <td>
+             <span style="color: var(--primary)">Dall' {{p.dataInizio | date:'dd/MM/yyyy'}}</span>
+             <br *ngIf="p.dataFine">
+             <span *ngIf="p.dataFine" style="color: var(--danger)">All' {{p.dataFine | date:'dd/MM/yyyy'}}</span>
+          </td>
+          <td>{{p.motivazione || '-'}}</td>
+          <td>
+            <span class="badge" [ngClass]="{
+                  'bg-warning': p.validato === null,
+                  'bg-success': p.validato === true,
+                  'bg-danger': p.validato === false
+            }">
+              {{ p.validato === null ? 'IN ATTESA' : (p.validato ? 'LECITO' : 'RESPINTO') }}
+            </span>
+          </td>
+          <td *ngIf="isDirettore">
+            <div *ngIf="p.validato === null" style="display: flex; gap: 10px;">
+               <button class="btn" style="background: var(--success); padding: 5px 10px; font-size: 0.8rem;" (click)="valutaPermesso(p.id, true)">✔ Approva</button>
+               <button class="btn" style="background: var(--danger); padding: 5px 10px; font-size: 0.8rem;" (click)="valutaPermesso(p.id, false)">✖ Rifiuta</button>
+            </div>
+            <div *ngIf="p.validato !== null" style="font-size: 0.85rem; color: var(--text-secondary);">
+               Esitata con decisione defintiva.
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="permessi.length === 0" style="padding: 20px; text-align: center; color: var(--text-secondary);">
+      Calendario Condiviso Aziendale: Nessuna richiesta di permesso in archivio.
+    </div>
+  </div>
+</div>

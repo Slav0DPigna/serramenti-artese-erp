@@ -1,0 +1,71 @@
+{
+    "id": "serramenti-artese",
+    "realm": "serramenti-artese",
+    "displayName": "Serramenti Artese SSO",
+    "enabled": true,
+    "loginTheme": "keycloak",
+    "roles": {
+      "realm": [
+        { "name": "direttore" },
+        { "name": "addetto_vendite" },
+        { "name": "magazziniere" },
+        { "name": "addetto_produzione" },
+        { "name": "cliente" }
+      ]
+    },
+    "clients": [
+      {
+        "clientId": "frontend-app",
+        "enabled": true,
+        "publicClient": true,
+        "redirectUris": [ "http://localhost:4200/*" ],
+        "webOrigins": [ "http://localhost:4200" ],
+        "standardFlowEnabled": true,
+        "implicitFlowEnabled": false,
+        "directAccessGrantsEnabled": true,
+        "baseUrl": "http://localhost:4200"
+      }
+    ],
+    "users": [
+      {
+        "username": "admin",
+        "enabled": true,
+        "firstName": "Proprietario",
+        "lastName": "Artese",
+        "credentials": [{ "type": "password", "value": "admin", "temporary": false }],
+        "realmRoles": [ "direttore", "addetto_vendite", "magazziniere", "addetto_produzione", "cliente" ]
+      },
+      {
+        "username": "giovanni.vendite",
+        "enabled": true,
+        "firstName": "Giovanni",
+        "lastName": "Vendite",
+        "credentials": [{ "type": "password", "value": "1234", "temporary": false }],
+        "realmRoles": [ "addetto_vendite", "cliente" ]
+      },
+      {
+        "username": "luigi.magazziniere",
+        "enabled": true,
+        "firstName": "Luigi",
+        "lastName": "Magazziniere",
+        "credentials": [{ "type": "password", "value": "1234", "temporary": false }],
+        "realmRoles": [ "magazziniere", "cliente" ]
+      },
+      {
+        "username": "marco.produzione",
+        "enabled": true,
+        "firstName": "Marco",
+        "lastName": "Produzione",
+        "credentials": [{ "type": "password", "value": "1234", "temporary": false }],
+        "realmRoles": [ "addetto_produzione" ]
+      },
+      {
+        "username": "giulia.cliente",
+        "enabled": true,
+        "firstName": "Giulia",
+        "lastName": "Cliente",
+        "credentials": [{ "type": "password", "value": "1234", "temporary": false }],
+        "realmRoles": [ "cliente" ]
+      }
+    ]
+  }

@@ -1,0 +1,164 @@
+<div class="glass-panel" *ngIf="isDirettore || isAddettoVendite" style="margin-bottom: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h2>Area Commerciale - Gestione Contratti</h2>
+    <button class="btn" style="background: var(--primary)" (click)="showForm = !showForm">
+      {{ showForm ? 'Chiudi Pannello' : '+ Nuovo Ordine' }}
+    </button>
+  </div>
+  
+  <div *ngIf="showForm" class="order-form">
+    <h3>Dettagli Intestatario</h3>
+    
+    <div style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; gap: 20px;">
+      <label style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
+        <input type="radio" name="clienteType" [(ngModel)]="nuovaAzioneCliente" value="esistente" style="accent-color: var(--primary);"> Scegli da Rubrica Esitente
+      </label>
+      <label style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
+        <input type="radio" name="clienteType" [(ngModel)]="nuovaAzioneCliente" value="nuovo" style="accent-color: var(--primary);"> Censisci Nuovo Cliente
+      </label>
+    </div>
+
+    <!-- Sezione Cliente Esistente -->
+    <div class="form-grid" *ngIf="nuovaAzioneCliente === 'esistente'">
+      <div class="form-group">
+        <label>Cliente (da Rubrica)</label>
+        <select [(ngModel)]="nuovoOrdine.clienteId">
+          <option [ngValue]="null">-- Seleziona un fido cliente --</option>
+          <option *ngFor="let c of clienti" [value]="c.id">{{c.nome}} ({{c.piva || c.email}})</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Indirizzo di Consegna Cantiere</label>
+        <input type="text" [(ngModel)]="nuovoOrdine.indirizzoConsegna" placeholder="Es. Via Roma 1, Milano">
+      </div>
+    </div>
+
+    <!-- Sezione Nuovo Cliente -->
+    <div *ngIf="nuovaAzioneCliente === 'nuovo'" style="border-left: 3px solid var(--primary); padding-left: 15px; margin-bottom: 20px;">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nome Completo o Ragione Sociale *</label>
+          <input type="text" [(ngModel)]="nuovoCliente.nome" placeholder="Es. Mario Rossi SRL">
+        </div>
+        <div class="form-group">
+          <label>Email (Username per Login Futuro)</label>
+          <input type="email" [(ngModel)]="nuovoCliente.email" placeholder="Es. mario.rossi@email.it">
+        </div>
+        <div class="form-group">
+          <label>Telefono</label>
+          <input type="text" [(ngModel)]="nuovoCliente.telefono" placeholder="Es. 333 123 4567">
+        </div>
+        <div class="form-group">
+          <label>Partita IVA / C.F.</label>
+          <input type="text" [(ngModel)]="nuovoCliente.piva" placeholder="Es. IT000111222">
+        </div>
+        <div class="form-group">
+          <label>Indirizzo Residenza / Sede Operativa</label>
+          <input type="text" [(ngModel)]="nuovoCliente.indirizzo" placeholder="Es. Viale Stazione 12">
+        </div>
+        <div class="form-group">
+          <label>Indirizzo di Consegna Cantiere dell'Ordine</label>
+          <input type="text" [(ngModel)]="nuovoOrdine.indirizzoConsegna" placeholder="Specificare se diverso dalla sede">
+        </div>
+      </div>
+    </div>
+    
+    <h3>Specifiche Manufatto</h3>
+    <div style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+        <input type="checkbox" [(ngModel)]="nuovoOrdine.useCustom" style="width: 20px; height: 20px; accent-color: var(--primary);">
+        <span><strong>Prodotto Fuori Standard / Su Misura Assoluta</strong> (sgancia l'ordine dai vincoli del catalogo)</span>
+      </label>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group" *ngIf="!nuovoOrdine.useCustom">
+        <label>Prodotto a Catalogo Serramenti</label>
+        <select [(ngModel)]="nuovoOrdine.prodottoSelezionato">
+          <option [ngValue]="null">-- Seleziona modello in serie --</option>
+          <option *ngFor="let p of prodotti" [value]="p.nome">{{p.nome}} (Base: {{p.prezzoBase | currency:'EUR':'symbol'}})</option>
+        </select>
+      </div>
+      <div class="form-group" *ngIf="nuovoOrdine.useCustom">
+        <label>Descrizione Pezzo Speciale Arredamento</label>
+        <input type="text" [(ngModel)]="nuovoOrdine.nomePersonalizzato" placeholder="Es. Finestra ad arco gotico 4 ante in Rovere">
+      </div>
+      <div class="form-group">
+        <label>Misure al millimetro (LxH)</label>
+        <input type="text" [(ngModel)]="nuovoOrdine.misure" placeholder="Es. 1200x1400">
+      </div>
+      <div class="form-group">
+        <label>Quantità Unità</label>
+        <input type="number" min="1" [(ngModel)]="nuovoOrdine.quantita">
+      </div>
+      <div class="form-group">
+        <label>Prezzo Pattuito Totale (€)</label>
+        <input type="number" min="0" step="0.01" [(ngModel)]="nuovoOrdine.prezzoPattuito">
+      </div>
+    </div>
+    
+    <div style="margin-top: 10px;">
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+         <input type="checkbox" [(ngModel)]="nuovoOrdine.installazionePrevista" style="width: 18px; height: 18px; accent-color: var(--primary);">
+         Aggiungere "Posa in Opera" al contratto?
+      </label>
+    </div>
+
+    <div style="margin-top: 20px; text-align: right;">
+      <button class="btn" style="background: var(--success); font-weight: bold; padding: 10px 25px; font-size: 1.1rem;" (click)="creaOrdine()">
+         📝 Conferma e Genera Ordine
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="glass-panel">
+  <h2>Ordini Clienti</h2>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Num. Ordine</th>
+          <th>Data Acquisto</th>
+          <th>Cliente (Commissionato da)</th>
+          <th>Indirizzo Consegna</th>
+          <th>Installazione</th>
+          <th>Importo Totale</th>
+          <th>Stato Avanzamento</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let o of ordini">
+          <td style="font-weight: bold; color: var(--primary);">#{{o.id}}</td>
+          <td>{{o.dataAcquisto | date:'dd/MM/yyyy'}}</td>
+          <td>
+            <strong>{{o.cliente?.nome || 'Cliente Anonimo'}}</strong><br>
+            <small style="color: var(--text-secondary)">{{o.cliente?.email || '-'}}</small>
+          </td>
+          <td>{{o.indirizzoConsegna}}</td>
+          <td>
+            <span *ngIf="o.installazionePrevista" style="color: var(--primary); font-weight: bold;">Sì</span>
+            <span *ngIf="!o.installazionePrevista" style="color: var(--text-secondary)">No</span>
+          </td>
+          <td style="font-weight: bold;">{{o.importoTotale | currency:'EUR':'symbol'}}</td>
+          <td>
+            <ng-container *ngIf="isDirettore || isAddettoProduzione; else soloLettura">
+              <select [(ngModel)]="o.stato" (change)="aggiornaStato(o)" style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit;">
+                <option *ngFor="let s of statiDisponibili" [value]="s">{{s}}</option>
+              </select>
+            </ng-container>
+            <ng-template #soloLettura>
+              <span class="badge" 
+                    [ngClass]="{'bg-warning': o.stato === 'In lavorazione', 'bg-success': o.stato === 'Consegnato'}">
+                {{o.stato}}
+              </span>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="ordini.length === 0" style="padding: 20px; text-align: center; color: var(--text-secondary);">
+      Nessun ordine trovato nel database.
+    </div>
+  </div>
+</div>

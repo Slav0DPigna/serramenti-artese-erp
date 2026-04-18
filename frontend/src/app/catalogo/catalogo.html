@@ -1,0 +1,21 @@
+<div class="glass-panel">
+  <h2>Catalogo Prodotti</h2>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Nome Prodotto</th>
+          <th>Descrizione</th>
+          <th>Azione</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of prodotti">
+          <td>{{p.nome}}</td>
+          <td>{{p.descrizione}}</td>
+          <td><button class="btn">Richiedi Preventivo</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
