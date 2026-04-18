@@ -142,17 +142,20 @@
           </td>
           <td style="font-weight: bold;">{{o.importoTotale | currency:'EUR':'symbol'}}</td>
           <td>
-            <ng-container *ngIf="isDirettore || isAddettoProduzione; else soloLettura">
-              <select [(ngModel)]="o.stato" (change)="aggiornaStato(o)" style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit;">
-                <option *ngFor="let s of statiDisponibili" [value]="s">{{s}}</option>
-              </select>
-            </ng-container>
-            <ng-template #soloLettura>
-              <span class="badge" 
-                    [ngClass]="{'bg-warning': o.stato === 'In lavorazione', 'bg-success': o.stato === 'Consegnato'}">
-                {{o.stato}}
-              </span>
-            </ng-template>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <ng-container *ngIf="isDirettore || isAddettoProduzione; else soloLettura">
+                <select [(ngModel)]="o.stato" (change)="aggiornaStato(o)" style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit;">
+                  <option *ngFor="let s of statiDisponibili" [value]="s">{{s}}</option>
+                </select>
+              </ng-container>
+              <ng-template #soloLettura>
+                <span class="badge" 
+                      [ngClass]="{'bg-warning': o.stato === 'In lavorazione', 'bg-success': o.stato === 'Consegnato'}">
+                  {{o.stato}}
+                </span>
+              </ng-template>
+              <button *ngIf="isDirettore" class="btn" style="background: var(--danger); padding: 4px 8px; font-size: 0.8rem;" (click)="eliminaOrdine(o.id)">Cestina</button>
+            </div>
           </td>
         </tr>
       </tbody>

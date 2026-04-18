@@ -144,4 +144,16 @@ export class OrdiniComponent implements OnInit {
         error: (err) => console.error(err)
     });
   }
+
+  eliminaOrdine(id: number) {
+    if(confirm(`Sei sicuro di voler cancellare l'ordine #${id}? Tutti i dati collegati verranno eliminati irreversibilmente.`)) {
+      this.http.delete(`http://localhost:8080/api/ordini/${id}`).subscribe({
+        next: () => { this.loadOrdini(); },
+        error: (err) => {
+           console.error(err);
+           alert("Errore durante la cancellazione dell'ordine.");
+        }
+      });
+    }
+  }
 }

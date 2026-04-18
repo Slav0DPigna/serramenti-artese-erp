@@ -11,6 +11,7 @@ public class ProdottoVenduto {
 
     @ManyToOne
     @JoinColumn(name = "ordine_id")
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.CASCADE)
     private Ordine ordine;
 
     @ManyToOne

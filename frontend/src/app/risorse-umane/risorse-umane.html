@@ -2,16 +2,63 @@
   <h2>Risorse Umane - Direzione Centralizzata</h2>
   <div class="table-container">
     <table>
-      <thead><tr><th>CF</th><th>Nome</th><th>Ruolo</th><th>Stipendio Mensile</th></tr></thead>
+      <thead><tr><th>CF</th><th>Nome</th><th>Ruolo</th><th>Stipendio Mensile</th><th>Azioni HR</th></tr></thead>
       <tbody>
         <tr *ngFor="let d of dipendenti">
           <td><small style="color: var(--text-secondary)">{{d.cf}}</small></td>
           <td style="font-weight: bold;">{{d.nome}}</td>
           <td>{{d.ruolo}}</td>
-          <td>{{d.stipendio | currency:'EUR':'symbol'}}</td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button *ngIf="isDirettore && d.ruolo !== 'Direttore'" class="btn" style="padding: 2px 6px; font-size: 0.8rem; background: var(--danger); border-radius: 4px; margin: 0;" (click)="modificaStipendio(d.cf, d.stipendio, -50)">-50€</button>
+              <span style="min-width: 75px; text-align: center;">{{d.stipendio | currency:'EUR':'symbol'}}</span>
+              <button *ngIf="isDirettore && d.ruolo !== 'Direttore'" class="btn" style="padding: 2px 6px; font-size: 0.8rem; background: var(--success); border-radius: 4px; margin: 0;" (click)="modificaStipendio(d.cf, d.stipendio, 50)">+50€</button>
+            </div>
+          </td>
+          <td>
+             <button *ngIf="d.cf !== mioProfilo?.cf && d.ruolo !== 'Direttore'" class="btn" style="background: var(--danger); padding: 4px 8px; font-size: 0.8rem;" (click)="licenziaDipendente(d.cf, d.nome)">Licenzia</button>
+             <span *ngIf="d.cf === mioProfilo?.cf || d.ruolo === 'Direttore'" style="color: var(--text-secondary); font-size: 0.8rem;">Non applicabile</span>
+          </td>
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<div class="glass-panel" *ngIf="isDirettore" style="margin-bottom: 20px; border-left: 4px solid var(--success);">
+  <h3>➕ Assumi Nuovo Dipendente</h3>
+  <div class="form-grid">
+    <div class="form-group">
+      <label>Codice Fiscale *</label>
+      <input type="text" [(ngModel)]="nuovoDipendente.cf" placeholder="Es. RSSMRA80A01H501Z" maxlength="16">
+    </div>
+    <div class="form-group">
+      <label>Nome e Cognome *</label>
+      <input type="text" [(ngModel)]="nuovoDipendente.nome" placeholder="Es. Mario Rossi">
+    </div>
+    <div class="form-group">
+      <label>Username Keycloak (Email) *</label>
+      <input type="text" [(ngModel)]="nuovoDipendente.email" placeholder="Es. mario.rossi">
+    </div>
+    <div class="form-group">
+      <label>Ruolo Aziendale</label>
+      <select [(ngModel)]="nuovoDipendente.ruolo">
+        <option value="Addetto Produzione">Addetto Produzione</option>
+        <option value="Magazziniere">Magazziniere</option>
+        <option value="Addetto alle Vendite">Addetto alle Vendite</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Telefono</label>
+      <input type="text" [(ngModel)]="nuovoDipendente.telefono" placeholder="Opzionale">
+    </div>
+    <div class="form-group">
+      <label>Stipendio Base Lordo (€)</label>
+      <input type="number" [(ngModel)]="nuovoDipendente.stipendio">
+    </div>
+  </div>
+  <div style="text-align: right; margin-top: 15px;">
+    <button class="btn" style="background: var(--success);" (click)="assumiDipendente()">📝 Registra Assunzione nel Sistema</button>
   </div>
 </div>
 

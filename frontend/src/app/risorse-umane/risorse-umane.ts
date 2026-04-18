@@ -96,10 +96,70 @@ export class RisorseUmaneComponent implements OnInit {
     });
   }
 
+  nuovoDipendente = {
+    cf: '',
+    nome: '',
+    ruolo: 'Addetto Produzione',
+    email: '',
+    telefono: '',
+    stipendio: 1500,
+    oreLavorate: 0,
+    ferieResidue: 20
+  };
+
   valutaPermesso(id: number, approvato: boolean) {
     this.http.put(`http://localhost:8080/api/permessi/${id}/valuta`, { validato: approvato }).subscribe({
        next: () => { this.loadPermessi(); },
        error: (err) => console.error(err)
+    });
+  }
+
+  assumiDipendente() {
+    if (!this.nuovoDipendente.cf || !this.nuovoDipendente.nome || !this.nuovoDipendente.email) {
+      alert("Codice Fiscale, Nome ed Email sono obbligatori per l'assunzione!");
+      return;
+    }
+
+    this.nuovoDipendente.cf = this.nuovoDipendente.cf.toUpperCase().trim();
+    const cfRegex = /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/;
+    if (!cfRegex.test(this.nuovoDipendente.cf)) {
+      alert("Formato Codice Fiscale non valido! Deve essere di 16 caratteri alfanumerici (es. RSSMRA80A01H501Z).");
+      return;
+    }
+    
+    this.http.post('http://localhost:8080/api/dipendenti', this.nuovoDipendente).subscribe({
+      next: () => {
+         this.nuovoDipendente = { cf: '', nome: '', ruolo: 'Addetto Produzione', email: '', telefono: '', stipendio: 1500, oreLavorate: 0, ferieResidue: 20 };
+         this.loadDipendenti();
+      },
+      error: (err) => {
+         console.error(err);
+         alert("Errore durante l'assunzione. Verifica che il CF o l'Email non siano già in uso.");
+      }
+    });
+  }
+
+  licenziaDipendente(cf: string, nome: string) {
+    if(confirm(`Sei sicuro di voler terminare il contratto di ${nome} (${cf})? L'operazione è irreversibile.`)) {
+      this.http.delete(`http://localhost:8080/api/dipendenti/${cf}`).subscribe({
+        next: () => { this.loadDipendenti(); },
+        error: (err) => {
+           console.error(err);
+           alert("Impossibile licenziare. Verifica se ci sono permessi o altre entità collegate a questo dipendente.");
+        }
+      });
+    }
+  }
+
+  modificaStipendio(cf: string, stipendioAttuale: number, variazione: number) {
+    const nuovoStipendio = stipendioAttuale + variazione;
+    if (nuovoStipendio < 500) {
+      alert("Operazione negata. Lo stipendio base non può scendere sotto i 500€ mensili.");
+      return;
+    }
+    this.http.put(`http://localhost:8080/api/dipendenti/${cf}/stipendio`, { stipendio: nuovoStipendio }).subscribe({
+      next: () => { this.loadDipendenti(); },
+      error: (err) => console.error(err)
     });
   }
 }
