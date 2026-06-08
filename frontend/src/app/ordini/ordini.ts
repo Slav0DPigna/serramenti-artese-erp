@@ -139,7 +139,7 @@ export class OrdiniComponent implements OnInit {
   }
 
   aggiornaStato(o: any) {
-    this.http.post('http://localhost:8080/api/ordini', o).subscribe({
+    this.http.put(`http://localhost:8080/api/ordini/${o.id}`, o).subscribe({
         next: () => { this.loadOrdini(); },
         error: (err) => console.error(err)
     });
