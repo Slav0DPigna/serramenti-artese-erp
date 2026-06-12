@@ -5,7 +5,7 @@ Questa è l'applicazione di ERP per l'impesa Serramenti Artese protetta con Sing
 ## Prerequisiti
 Assicurati di avere [Docker](https://www.docker.com/) in esecuzione sul terminale e [Maven] installato o pronto nel folder backend.
 
-## 1. Avviare Keycloak (Indispensabile!)
+## 1. Avviare Keycloak 
 
 L'applicazione e il file script automatizzato `./start.sh` presumono che il servizio Identity Provider sia *già avviato e pronto*.
 Apri il terminale del backend e digita:
